@@ -1,6 +1,6 @@
 <template>
 <div>
-    <v-dialog
+      <v-dialog
       v-model="dialog"
       persistent
       max-width="600px"
@@ -61,14 +61,15 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-       <h2 class="display-3">Pending tickets</h2>
+    <br/>
+    <h2 class="display-2 display-2 font-weight-thin mb-4">Pending tickets</h2>
         
 <!-- v-for is like a for loop it loops through an array it enables us to display things according to the number of elements we have in the array  -->
    
   
  <!-- class pl can move the proximity to the margins -->
      <v-row>
-    <div id="cards" class="pl-4" v-for="(item,index) in ticketArray" :key="index">
+    <div id="cards" class="pl-4" v-for="(item,index) in  pendingTickets" :key="index">
              <v-card>
                <v-card-title>CreatedBy: {{item.creator}}</v-card-title>
               <v-card-text>IssuedTo:    {{item.issuedTo}}</v-card-text>
@@ -76,9 +77,47 @@
                 <v-card-text>Info:      {{item.TicketInfo}}</v-card-text>
             </v-card>
     </div>
-   </v-row>
-    <!-- Right upon clicking the button the submit function is called, and all the instructions are executed in this function -->
-  
+   </v-row>  
+   <br/>
+       <h2 class="display-2 font-weight-thin mb-4">Created Tickets</h2>
+               <v-col cold="12" md="12">
+    <v-card>
+    <v-simple-table>
+    <template v-slot:default>
+      <thead>
+        <tr>
+          <th class="text-left">
+            Created By:
+          </th>
+          <th class="text-left">
+            Issued To:
+          </th>
+           <th class="text-left">
+            Description:
+          </th>
+           <th class="text-left">
+            TicketInfo:
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="item in ticketArray"
+          :key="item.creator"
+        >
+          <td>{{ item.creator }}</td>
+          <td>{{ item.issuedTo }}</td>
+          <td>{{ item.Description }}</td>
+          <td>{{ item.TicketInfo }}</td>
+        </tr>
+      </tbody>
+    </template>
+  </v-simple-table>
+   </v-card>
+   </v-col>
+ 
+   <br/>
+ 
 </div>
 </template>
 <script>
@@ -93,9 +132,18 @@ export default {
         TicketInfo: null,
         //we are getting the object and pushing it into the ticket array
         ticketArray:[],
+        pendingTickets:null,
         //This enables the dialog to close after you 
         dialog:false
         }
+    },
+    mounted(){
+     this.getPendingTickets();
+    },
+    computed:{
+      trackCreatedTickets(){
+       return this.ticketArray;
+      }
     },
     methods: {
     //When the submit function is called the data fields in it are pushed into the ticket array
@@ -131,6 +179,12 @@ export default {
         this.TicketInfo=null,
 
         this.dialog=false
+        },
+        getPendingTickets(){
+          axios.get("http://localhost:3004/tickets").then(res=>{
+            this.pendingTickets = res.data;
+            console.log("Pending tickets received");
+          })
         }
     }
     }

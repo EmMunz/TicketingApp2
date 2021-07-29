@@ -1,6 +1,5 @@
 <template>
 <div>
-  <br/>
   <component :is="DynamicCards"/>
 </div>
 </template>
